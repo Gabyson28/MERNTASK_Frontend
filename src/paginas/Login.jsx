@@ -24,10 +24,14 @@ const Login = () => {
     }
 
     try {
+
+      
       const { data } = await clienteAxios.post("/usuarios/login", {
         email,
         password,
       });
+      console.log(data);
+      
 
       localStorage.setItem("token", data.token);
 

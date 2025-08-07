@@ -32,7 +32,7 @@ const Tarea = ({ tarea }) => {
             estado ? "bg-sky-600" : "bg-gray-600"
           } px-4 py-3 text-white uppercase font-bold text-sm rounded-lg`}
         >
-          {estado ? "Completa" : "Incompleta"}
+          {estado ? "Completada" : "Completar"}
         </button>
         {admin && (
           <button
