@@ -36,7 +36,6 @@ const Proyecto = () => {
 
   useEffect(() => {
     socket.on("respuesta", (persona) => {
-      console.log(persona);
     });
   });
 

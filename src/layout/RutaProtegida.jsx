@@ -8,21 +8,26 @@ const RutaProtegida = () => {
 
   if (cargando) return "Cargando";
   return (
-    <>
-      {auth._id ? (
-        <div className="bg-gray-100 ">
-          <Header />
-          <div className="md:flex md:min-h-screen ">
-            <Sidebar />
-            <main className="flex-1 p-10">
-              <Outlet />
-            </main>
-          </div>
+   <>
+  {auth._id ? (
+    <div className="bg-gray-100">
+      <Header />
+      <div className="flex flex-col md:flex-row md:min-h-screen">
+        {/* Sidebar */}
+        <div className="w-full md:w-auto flex justify-center md:block">
+          <Sidebar />
         </div>
-      ) : (
-        <Navigate to={"/"} />
-      )}
-    </>
+
+        {/* Contenido */}
+        <main className="flex-1 p-10">
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  ) : (
+    <Navigate to="/" />
+  )}
+</>
   );
 };
 

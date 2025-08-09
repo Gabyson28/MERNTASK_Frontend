@@ -20,6 +20,7 @@ const Header = () => {
         </h2>
 
         <div className="flex flex-col md:flex-row items-center gap-4">
+          
           <button
             className="font-bold uppercase"
             onClick={handleBuscador}
