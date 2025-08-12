@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Alerta from "../components/Alerta";
 import clienteAxios from "../config/clienteAxios";
 import useAuth from "../hooks/useAuth";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -10,10 +11,38 @@ const Login = () => {
   const [alerta, setAlerta] = useState({});
 
   const { setAuth } = useAuth();
+  const loginMutation = useMutation({
+    mutationFn: async ({ email, password }) => {
+      const { data } = await clienteAxios.post("/usuarios/login", {
+        email,
+        password,
+      });
+      return data;
+    },
+    onSuccess: (data) => {
+      localStorage.setItem("token", data.token);
+      setAuth(data);
+      setAlerta({});
+      navigate("/proyectos");
+    },
+    onError: (error) => {
+      setAlerta({
+        msg: error.response.data.msg,
+        error: true,
+      });
+    },
+  });
 
   const navigate = useNavigate();
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if ([email, password].includes("")) {
+      setAlerta({ msg: "Todos los campos son obligatorios", error: true });
+      return;
+    }
+    loginMutation.mutate({ email, password });
+  };
+  const handleSubmit2 = async (e) => {
     e.preventDefault();
 
     if ([email, password].includes("")) {
@@ -24,13 +53,21 @@ const Login = () => {
     }
 
     try {
+      const { data, isFetching } = useMutation(
+        ["login", email, password],
+        async () => {
+          const { data } = await clienteAxios.post("/usuarios/login", {
+            email,
+            password,
+          });
+          return { data, isFetching };
+        }
+      );
 
-      
-      const { data } = await clienteAxios.post("/usuarios/login", {
-        email,
-        password,
-      });
-      
+      // const { data } = await clienteAxios.post("/usuarios/login", {
+      //   email,
+      //   password,
+      // });
 
       localStorage.setItem("token", data.token);
 
@@ -93,11 +130,17 @@ const Login = () => {
           />
         </div>
 
-        <input
-          className="bg-sky-700 mb-5 w-full py-3 text-white uppercase font-bold rounded hover:cursor-pointer hover:bg-sky-800 transition-colors"
+        <button
           type="submit"
-          value={"Iniciar Sesión"}
-        />
+          disabled={loginMutation.isPending}
+          className="bg-sky-700 mb-5 w-full py-3 text-white uppercase font-bold rounded hover:cursor-pointer hover:bg-sky-800 transition-colors flex justify-center items-center"
+        >
+          {loginMutation.isPending ? (
+            <div className="animate-spin rounded-full h-5 w-5 border-4 border-white border-t-transparent"></div>
+          ) : (
+            "Iniciar Sesión"
+          )}
+        </button>
       </form>
       <nav className="lg:flex lg:justify-between">
         <Link
